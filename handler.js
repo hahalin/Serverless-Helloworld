@@ -1,10 +1,41 @@
 'use strict';
+const serverless = require("serverless-http");
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const app = express();
 
 // top of handler.js
 const connectToDatabase = require('./db');
 const Note = require('./models/Note');
 require('dotenv').config({ path: './variables.env' });
 
+
+app.use(cors());
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
+
+app.get("/notes",(req,res)=>{
+  connectToDatabase()
+    .then(() => {
+      Note.find()
+        .then(notes => {
+          res.status(200).send(notes);
+        })
+        .catch(err => res.send('Could not fetch the notes.'));
+    });
+});
+
+app.get("/hello",(req,res)=>{
+  var hello={message:'hello world'}
+  res.status(200).send(hello);
+});
+
+module.exports.index=serverless(app);
 
 module.exports.getAll = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;

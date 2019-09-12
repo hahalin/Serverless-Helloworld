@@ -4,42 +4,12 @@ provider:
   runtime: nodejs10.x
   region: ap-southeast-1	
 functions:
-  getAll:
-    handler: handler.getAll
+  app:
+    handler: handler.index
     events:
-      - http:
-          path: notes
-          method: get
-          cors: true
-            #origin: '*' # <-- Specify allowed origin
-            #headers: # <-- Specify allowed headers
-            #  - Content-Type
-            #  - X-Amz-Date
-            #  - Authorization
-            #  - X-Api-Key
-            #  - X-Amz-Security-Token
-            #  - X-Amz-User-Agent
-            #allowCredentials: false
-  create:
-    handler: handler.create
-    events:
-      - http:
-          path: notes
-          method: post
-          cors: true
-  hello:
-    handler: handler.hello
-    events:
-      - http:
-          path: hello/get
-          method: get
-          cors: true
-  func2:
-    handler: handler.myFunc2
-    events:
-      - http:
-          path: hello/func2
-          method: get
+      - http: ANY /
+      - http: 'ANY {proxy+}'    
+  
 plugins:
   - serverless-offline
   - serverless-dynamodb-local
