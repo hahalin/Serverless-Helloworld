@@ -1,39 +1,38 @@
 'use strict';
 const serverless = require("serverless-http");
+const http=require('http');
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const mongoose = require("mongoose");
-const app = express();
 
-// top of handler.js
+const morgan=require("morgan");
+const app = express();
+const router=require("./router");
+
 const connectToDatabase = require('./db');
-const Note = require('./models/Note');
+const migration=require('./service/MigrationHelper');
 require('dotenv').config({ path: './variables.env' });
 
-
 app.use(cors());
+app.use(morgan('combined'));
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
-
+app.use(bodyParser.json({type:'*/*'}));
 // parse application/json
 app.use(bodyParser.json());
 
-app.get("/notes",(req,res)=>{
-  connectToDatabase()
-    .then(() => {
-      Note.find()
-        .then(notes => {
-          res.status(200).send(notes);
-        })
-        .catch(err => res.send('Could not fetch the notes.'));
-    });
-});
+const [initAdmin]=migration();
+initAdmin();
 
-app.get("/hello",(req,res)=>{
-  var hello={message:'hello world'}
-  res.status(200).send(hello);
-});
+router(app);
+
+//return;
+//server setup
+const port=process.env.PORT || 3090;
+const server=http.createServer(app);
+server.listen(port);
+
+return;
 
 module.exports.index=serverless(app);
 

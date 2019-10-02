@@ -65,3 +65,5 @@ typings/
 variables.env
 
 secret
+
+config.js
