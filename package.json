@@ -5,7 +5,7 @@
   "main": "handler.js",
   "dependencies": {
     "dotenv": "^8.0.0",
-    "mongoose": "^5.6.9"
+    "mongoose": "^5.7.5"
   },
   "devDependencies": {
     "serverless-dynamodb-local": "^0.2.38",
